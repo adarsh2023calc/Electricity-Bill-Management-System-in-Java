@@ -1,0 +1,10 @@
+# Java build files
+/target/
+*.class
+
+# IDE settings
+/.idea/
+/.vscode/
+
+# Environment variables
+.env

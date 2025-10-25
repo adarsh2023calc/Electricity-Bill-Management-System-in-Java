@@ -14,6 +14,11 @@ import java.time.LocalDate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import com.mongodb.client.*;
+import org.bson.Document;
+import io.github.cdimascio.dotenv.Dotenv;
+
+
 
 /**
  *
@@ -241,43 +246,52 @@ public class CreateUser extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_NameFieldActionPerformed
 
+
+    // To-do: Use any online SQL database
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        String UserName = UserField.getText();
+         String UserName = UserField.getText();
          String Name = NameField.getText();
          String Email = EmailField.getText();
          String PaymentMethod = PaymentField.getText();
          String AddressData = AddressField.getText();
          String Password = PasswordField.getText();
-         String sql = "Insert into user_details values (?,?,?,?,?,?,?,?,?)";
-         String url = "jdbc:postgresql://localhost:5432/my_db";
-         String user = "postgres";
-         String user_password = "Calculus1@";
-         try (Connection conn = DriverManager.getConnection(url, user, user_password);
-             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+    
+         Dotenv env = Dotenv.load();
+         String url = env.get("MONGODB_URL");
+        
+         try (MongoClient mongoClient = MongoClients.create(url);) {
 
-            // Set values for parameters
-            preparedStatement.setString(1,UserName);
-             preparedStatement.setString(2, Name);
-            preparedStatement.setString(3, AddressData);
-            preparedStatement.setString(4, Email);
-            preparedStatement.setString(5,PaymentMethod);
-            preparedStatement.setString(6,"Active");
-            LocalDate Date = LocalDate.now();
-            java.sql.Date date = java.sql.Date.valueOf(Date);
-            preparedStatement.setDate(7,date);
-            preparedStatement.setInt(8,0);
-            preparedStatement.setString(9,Password);
+              // MongoDB connection to the Backend
+            MongoDatabase database = mongoClient.getDatabase("Electricity");
+            MongoCollection<Document> collection = database.getCollection("user_details");
+
+
+            Document new_Document = new Document().append("user_name", UserName)
+                .append("name", Name)
+                .append("email", Email)
+                .append("payment_method", PaymentMethod)
+                .append("address", AddressData)
+                .append("status", "Active")
+                .append("registered_on", LocalDate.now().toString())
+                .append("login_count", 0)
+                .append("password", Password);
             
-           // Execute the INSERT statement
-            int rowsInserted = preparedStatement.executeUpdate();
-            if (rowsInserted > 0) {
-                JOptionPane.showConfirmDialog(null, "Welcome" +UserName ,"Successfull registration",JOptionPane.CLOSED_OPTION);
+            collection.insertOne(new_Document);
+            JOptionPane.showMessageDialog(null,
+                    "Welcome " + UserName,
+                    "Successful Registration",
+                    JOptionPane.INFORMATION_MESSAGE);
             }
 
-        } catch (SQLException ex) {
-            JOptionPane.showConfirmDialog(null, "Registrstion Unsuccessfull" ,"Successfull registration",JOptionPane.CLOSED_OPTION);
-            ex.printStackTrace();
-        }
+            // Catch exception which catches exceptions
+            catch(Exception exception){
+                JOptionPane.showMessageDialog(null, "Registration Unsuccessful",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+                exception.printStackTrace();
+                
+            }
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void EmailFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EmailFieldActionPerformed
