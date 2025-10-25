@@ -10,6 +10,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFormattedTextField;
 
+import org.bson.Document;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -25,7 +27,7 @@ public class UserDetails extends javax.swing.JFrame {
      *
      * @param result
      */
-    ResultSet r1;
+    Document r1;
     String UserName;
     String Name;
     String Email;
@@ -35,22 +37,20 @@ public class UserDetails extends javax.swing.JFrame {
     String PaymentMethodData;
     String AccountBalanceData;
     String Password;
-    public UserDetails(ResultSet result) {
+    public UserDetails(Document result) {
 
         try {
             this.r1 = result;
-            UserName = result.getString("username");
-            System.out.println(UserName);
+            UserName = result.getString("user_name");
             Name = result.getString("name");
             Email = result.getString("email");
             Password = result.getString("password");
-            PaymentMethod = result.getString("PaymentMethod");
-            AccountStatusData = result.getString("AccountStatus");
+            PaymentMethod = result.getString("payment_method");
+            AccountStatusData = result.getString("status");
             AddressData = result.getString("address");
-            PaymentMethodData = result.getString("PaymentMethod");
-            AccountBalanceData = result.getString("AccountBalance");
+            AccountBalanceData = result.getString("balance");
             initComponents();
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("Hasta-la-Vista Babay");
             CreateUser new_User = new CreateUser();
             new_User.setVisible(true);

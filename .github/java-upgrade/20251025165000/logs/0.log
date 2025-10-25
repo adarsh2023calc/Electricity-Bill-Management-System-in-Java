@@ -1,0 +1,13 @@
+2025-10-25T16:50:00.980Z [INFO] ----------------------invoke list_jdks----------------------
+2025-10-25T16:50:00.980Z [INFO] [Tool.invoke]({name: list_jdks, input: {
+  "version": "21",
+  "projectPath": "/home/adarsh2024/Electricity-Bill-Management-System-in-Java"
+}}).
+2025-10-25T16:50:00.980Z [INFO] [Task.start](): Starting task toolCall
+2025-10-25T16:50:00.980Z [INFO] [Task.start](): Started task toolCall
+2025-10-25T16:50:00.980Z [INFO] [Tool.invoke] validate GitHub Copilot license.
+2025-10-25T16:50:00.980Z [WARN] "GitHub Copilot app modernization - upgrade for Java" and its tools are only available for GitHub Copilot "Pro", "Pro+", "Business" and "Enterprise" plans.
+2025-10-25T16:50:00.980Z [ERROR] [Tool.invoke] error occurs when invoking tool list_jdks: UnsupportedCopilotPlanError: "GitHub Copilot app modernization - upgrade for Java" and its tools are only available for GitHub Copilot "Pro", "Pro+", "Business" and "Enterprise" plans.. Please upgrade your GitHub Copilot plan to use this feature or upgrading this project using other tools you prefer..
+2025-10-25T16:50:00.980Z [INFO] [Task.complete](): Completing task toolCall
+2025-10-25T16:50:00.981Z [INFO] ----------------------invoked list_jdks----------------------
+2025-10-25T16:50:00.982Z [INFO] [Task.complete](): Completed task toolCall

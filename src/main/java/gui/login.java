@@ -15,6 +15,15 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.*;
 import javax.swing.JOptionPane;
+
+import org.bson.Document;
+
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+
+import io.github.cdimascio.dotenv.Dotenv;
 public class login extends javax.swing.JFrame {
 
     /**
@@ -146,42 +155,45 @@ public class login extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         
         String UserName = jTextField1.getText();
-        char[] Password = jPasswordField1.getPassword();
-        String PasswordData = new String (Password);
-        String sql = "SELECT * FROM user_details WHERE username='" + UserName + "' AND password='" + PasswordData + "'";
-        String url = "jdbc:postgresql://localhost:5432/my_db";
-        String user = "postgres";
-        String user_password = "Calculus1@";
-        try{
-            Connection c1 = DriverManager.getConnection(url, user, user_password);
-            Statement query = c1.createStatement();
-            ResultSet resultSet = query.executeQuery(sql);
-            if (resultSet.next()){
-            UserDetails login1 = new UserDetails(resultSet);
-            login1.setVisible(true);
+        String Password = new String(jPasswordField1.getPassword());
+        Dotenv env = Dotenv.load();
+        String url = env.get("MONGODB_URL");
+        
+        try(MongoClient client = MongoClients.create(url);){
+            MongoDatabase db = client.getDatabase("Electricity");
+            MongoCollection<Document> user_details = db.getCollection("user_details");
+            Document searchQuery = new Document().append("user_name",UserName).append("password",Password);
+            Document user = user_details.find(searchQuery).first();
+    
+
+            if (user != null){
+                UserDetails login1 = new UserDetails(user);
+                login1.setVisible(true);
             }
-            
+
             else{
-                String sql1="SELECT * FROM user_details WHERE username='" + UserName +"'";
-                Connection c2 = DriverManager.getConnection(url, user, user_password);
-                Statement query1 = c1.createStatement();
-                ResultSet resultSet1 = query.executeQuery(sql1);
-                if(resultSet1.next()){
-                 JOptionPane.showConfirmDialog(null, "It seems you have entered the wrong password","Error!",JOptionPane.CLOSED_OPTION);
-                }
-                else{
+                
+                searchQuery =  new Document().append("user_name",UserName);
+                user =user_details.find(searchQuery).first();
+                if (user== null){
                     int ans = JOptionPane.showConfirmDialog(null, "It seems you have never registered as a user. If Yes, so please register","Error!",JOptionPane.YES_OPTION);
                     if (ans==JOptionPane.YES_OPTION){
                     CreateUser c3 = new CreateUser();
                     c3.setVisible(true);
-                    }
                 }
-                 
+
+                else{
+                    JOptionPane.showConfirmDialog(null, "It seems you have entered the wrong password","Error!",JOptionPane.CANCEL_OPTION);
+                }
+
+
             }
-                    
         }
         
+    }
+        
         catch(Exception e){
+            JOptionPane.showMessageDialog(null,"Unresolved Error", "Error", JOptionPane.CANCEL_OPTION);
             e.printStackTrace();
         }
     }//GEN-LAST:event_jButton1ActionPerformed
